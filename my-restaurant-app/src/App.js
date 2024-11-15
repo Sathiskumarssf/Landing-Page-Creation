@@ -1,14 +1,16 @@
 import './App.css';
 import Hero from './component/Hero';
-import Menu from './component/Menu';
+ 
+import Navbar from './component/Navbar';
  
 function App() {
   return (
     <div className="text-center">
+      <Navbar  />
       <h1 className="text-4xl font-bold text-blue-500">
-        Welcome to My Restaurant App!
+      
         <Hero/>
-        <Menu/>
+        
       </h1>
     </div>
   );
