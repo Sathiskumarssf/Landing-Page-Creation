@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors(
 {
-origin: ["https://deploy-mern-lihq.vercel.app"],
+origin: ["landing-page-creation.vercel.app"],
 methods: ["POST", "GET"],
 credentials: true
 }
