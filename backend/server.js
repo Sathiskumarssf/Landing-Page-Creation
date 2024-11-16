@@ -9,14 +9,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-
-app.use(cors(
-{
-origin: ["landing-page-creation-xzwb.vercel.app"],
-methods: ["POST", "GET"],
-credentials: true
-}
-));
+app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
@@ -52,4 +45,3 @@ MongoClient.connect(uri)
     console.error('Failed to connect to MongoDB:', error.message);
     process.exit(1); // Exit the process if MongoDB connection fails
   });
-

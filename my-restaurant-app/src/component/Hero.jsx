@@ -67,7 +67,7 @@ export default function Hero() {
     if (!validate()) return;
   
     try {
-      const response = await fetch("landing-page-creation.vercel.app/reservation", {
+      const response = await fetch("http://localhost:5000/reservation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
