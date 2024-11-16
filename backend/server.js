@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors(
 {
-origin: ["https://landing-page-creation-xzwb.vercel.app/"],
+origin: ["https://landing-page-creation-xzwb.vercel.app"],
 methods: ["POST", "GET"],
 credentials: true
 }
