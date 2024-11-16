@@ -1,6 +1,6 @@
 I have created this project by MERN stack.
-sir can clone this project using "git clone https://github.com/Sathiskumarssf/Landing-Page-Creation.git" this comment 
-for check my project sir can follow this stap and get idea about my project
+sir can clone this project using "git clone https://github.com/Sathiskumarssf/Landing-Page-Creation.git" this comment and
+for check my project sir can follow this step and get idea about my project
 
 1.for backend 
   I.add .env file to the backend folder and add this things
