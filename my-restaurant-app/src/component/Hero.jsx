@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export default function Hero() {
-  const [isFormVisible, setIsFormVisible] = useState(false); // state to show/hide the form
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [reservation, setReservation] = useState({
     name: '',
     email: '',
@@ -10,6 +10,9 @@ export default function Hero() {
     time: '',
     guests: 1,
   });
+
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const dishes = [
     { imageUrl: '/asset/image.png', name: 'Spaghetti Carbonara', price: '$12', description: 'Classic Italian pasta dish' },
@@ -20,7 +23,43 @@ export default function Hero() {
     { imageUrl: '/asset/image.png', name: 'Caesar Salad', price: '$10', description: 'Crispy romaine with creamy Caesar dressing' },
   ];
 
-  // Handle input changes in the form
+  const validate = () => {
+    const newErrors = {};
+
+    if (!reservation.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!reservation.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(reservation.email)) {
+      newErrors.email = 'Invalid email address';
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!reservation.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!phoneRegex.test(reservation.phone)) {
+      newErrors.phone = 'Invalid phone number (10 digits required)';
+    }
+
+    if (!reservation.date.trim()) {
+      newErrors.date = 'Date is required';
+    }
+
+    if (!reservation.time.trim()) {
+      newErrors.time = 'Time is required';
+    }
+
+    if (reservation.guests < 1) {
+      newErrors.guests = 'Number of guests must be at least 1';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setReservation((prev) => ({
@@ -29,12 +68,44 @@ export default function Hero() {
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Reservation Data:', reservation);
-    setIsFormVisible(false); // Close form after submission (optional)
+    
+    if (!validate()) return;
+  
+    try {
+      const response = await fetch("http://localhost:5000/reservation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reservation),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Reservation Successful:", data);
+        setSuccessMessage("Your reservation was successful! Thank you.");
+        
+        // Reset form data after submission
+        setReservation({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          guests: 1,
+        });
+  
+      } else {
+        const errorData = await response.json();
+        console.error("Error submitting reservation:", errorData);
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+    }
   };
+  
 
   return (
     <div>
@@ -46,7 +117,7 @@ export default function Hero() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">Welcome to Our Restaurant</h1>
           <p className="text-lg sm:text-xl mt-4">Experience the finest cuisine in town</p>
           <button
-            className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="mt-6 bg-blue-500  text-sm md:text-xl lg:text-4xl  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsFormVisible(true)} // Show form when button is clicked
           >
             Reserve a Table
@@ -57,7 +128,7 @@ export default function Hero() {
       {/* Reservation Form */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-112 relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 sm:w-96 md:w-112 lg:w-128 relative mx-4">
             {/* Close button */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -65,8 +136,8 @@ export default function Hero() {
             >
               &times;
             </button>
-
-            <h3 className="text-2xl font-semibold mb-4">Reserve Your Table</h3>
+        
+            <h3 className="text-xl sm:text-2xl text-gray-800 font-semibold mb-4">Reserve Your Table</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -75,9 +146,10 @@ export default function Hero() {
                   name="name"
                   value={reservation.name}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   required
                 />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -86,20 +158,22 @@ export default function Hero() {
                   name="email"
                   value={reservation.email}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   required
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <label className="block text-sm md:text-xl lg:text-xl font-medium text-gray-700">Phone</label>
                 <input
                   type="tel"
                   name="phone"
                   value={reservation.phone}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   required
                 />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Date</label>
@@ -108,9 +182,10 @@ export default function Hero() {
                   name="date"
                   value={reservation.date}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   required
                 />
+                {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Time</label>
@@ -119,9 +194,10 @@ export default function Hero() {
                   name="time"
                   value={reservation.time}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   required
                 />
+                {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Number of Guests</label>
@@ -130,26 +206,40 @@ export default function Hero() {
                   name="guests"
                   value={reservation.guests}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border text-sm md:text-xl lg:text-xl text-gray-800 border-gray-300 rounded"
                   min="1"
                   required
                 />
+                {errors.guests && <p className="text-red-500 text-sm mt-1">{errors.guests}</p>}
               </div>
               <button
                 type="submit"
-                className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400"
+                className="w-full bg-blue-500 text-white text-lg font-semibold py-2 px-4 rounded hover:bg-blue-700"
               >
                 Submit Reservation
               </button>
             </form>
+            {successMessage && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 mx-4">
+            <div className="mt-4 text-green-500 text-sm">{successMessage}</div>
+            <button
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+              onClick={() => setSuccessMessage('')} // Close success message
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
           </div>
         </div>
       )}
 
       {/* Menu Section */}
       <div id="menu" className="text-center bg-slate-500 py-8">
-        <h2 className="text-3xl font-bold mb-8">Our Menu</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-4xl font-bold text-white  mb-8">Our Menu</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-3">
           {dishes.map((dish, index) => (
             <div key={index} className="p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200">
               <img src={dish.imageUrl} alt={dish.name} className="w-full h-64 object-cover rounded-t-lg mb-4" />
