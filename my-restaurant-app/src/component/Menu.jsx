@@ -9,7 +9,7 @@ const Menu = () => {
     // Fetch data from the API
     const fetchMenu = async () => {
       try {
-        const response = await fetch('http://localhost:5000/menu');
+        const response = await fetch('landing-page-creation.vercel.app/menu');
         if (!response.ok) {
           throw new Error('Failed to fetch menu data');
         }
