@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Contact from './Contects';
+import Menu from './Menu';
 
 export default function Hero() {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -13,16 +15,7 @@ export default function Hero() {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState(''); 
-
-  const dishes = [
-    { imageUrl: '/asset/image.png', name: 'Spaghetti Carbonara', price: '$12', description: 'Classic Italian pasta dish' },
-    { imageUrl: '/asset/image.png', name: 'Margherita Pizza', price: '$15', description: 'Fresh basil, mozzarella, and tomato sauce' },
-    { imageUrl: '/asset/image.png', name: 'Caesar Salad', price: '$10', description: 'Crispy romaine with creamy Caesar dressing' },
-    { imageUrl: '/asset/image.png', name: 'Spaghetti Carbonara', price: '$12', description: 'Classic Italian pasta dish' },
-    { imageUrl: '/asset/image.png', name: 'Margherita Pizza', price: '$15', description: 'Fresh basil, mozzarella, and tomato sauce' },
-    { imageUrl: '/asset/image.png', name: 'Caesar Salad', price: '$10', description: 'Crispy romaine with creamy Caesar dressing' },
-  ];
-
+ 
   const validate = () => {
     const newErrors = {};
 
@@ -128,7 +121,7 @@ export default function Hero() {
       {/* Reservation Form */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 sm:w-96 md:w-112 lg:w-128 relative mx-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[90%] md:w-[60%] lg:w-[40%] relative mx-4">
             {/* Close button */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -238,17 +231,11 @@ export default function Hero() {
 
       {/* Menu Section */}
       <div id="menu" className="text-center bg-slate-500 py-8">
-        <h2 className="text-4xl font-bold text-white  mb-8">Our Menu</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-3">
-          {dishes.map((dish, index) => (
-            <div key={index} className="p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200">
-              <img src={dish.imageUrl} alt={dish.name} className="w-full h-64 object-cover rounded-t-lg mb-4" />
-              <h3 className="text-xl font-bold">{dish.name}</h3>
-              <p className="text-gray-700">{dish.description}</p>
-              <p className="text-blue-500 font-bold mt-2">{dish.price}</p>
-            </div>
-          ))}
-        </div>
+        <Menu/>
+      </div>
+
+      <div id='contect'>
+          <Contact/>
       </div>
     </div>
   );

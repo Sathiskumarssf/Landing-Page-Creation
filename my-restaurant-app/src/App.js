@@ -6,11 +6,10 @@ import Navbar from './component/Navbar';
 function App() {
   return (
     <div className="text-center">
-      <Navbar  />
+      <Navbar  className="fixed"/>
       <h1 className="text-4xl font-bold text-blue-500">
       
         <Hero/>
-        
       </h1>
     </div>
   );
